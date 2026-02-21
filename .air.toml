@@ -1,0 +1,28 @@
+# .air.toml
+
+root = "."
+
+tmp_dir = "tmp"
+
+[build]
+  # Entrypoint, make sure it matches your actual folder structure
+  cmd = "go build -o ./tmp/server ./cmd/server/main.go"
+  bin = "tmp/server"
+
+  # Exclude dirs we never want to watch
+  exclude_dir = ["tmp", "vendor", "logs"]
+  include_ext = ["go"]
+
+[watch]
+  extensions = ["go"]
+  use_polling = true   # Needed for Docker on macOS/Windows
+  poll = true
+  delay = 1000         # Wait 1s after a change
+  include = ["."]
+  exclude = ["tmp", "vendor",  "logs"]
+
+[log]
+  time = true
+
+[debug]
+  enable = true

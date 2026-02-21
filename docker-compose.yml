@@ -1,0 +1,17 @@
+services:
+  redis:
+    image: redis:7.2
+    container_name: worker_pool_redis
+    ports:
+      - "6377:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - worker_pool
+
+volumes:
+  redis_data:
+
+networks:
+  worker_pool:
+    driver: bridge

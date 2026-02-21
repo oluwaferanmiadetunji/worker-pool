@@ -1,0 +1,102 @@
+openapi: 3.0.3
+
+info:
+  title: Worker Pool
+  description: API Specification
+  version: 0.0.1
+
+servers:
+  - url: http://localhost:3333
+    description: Main API server
+
+paths:
+  /webhooks/payments:
+    post:
+      summary: Payment webhook
+      operationId: webhookPayment
+      security: []
+      parameters:
+        - in: header
+          name: X-Webhook-Signature
+          required: false
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WebhookPaymentRequest"
+      responses:
+        "200":
+          description: Event received
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WebhookAckResponse"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorBadRequest"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorInternal"
+
+components:
+  schemas:
+    ErrorBadRequest:
+      type: object
+      required: [code, message]
+      properties:
+        code:
+          type: integer
+          example: 400
+        message:
+          type: string
+          example: Bad request
+
+    ErrorInternal:
+      type: object
+      required: [code, message]
+      properties:
+        code:
+          type: integer
+          example: 500
+        message:
+          type: string
+          example: Internal server error
+
+    WebhookPaymentRequest:
+      type: object
+      required: [event_id, type, amount, currency, occurred_at]
+      properties:
+        event_id:
+          type: string
+          example: evt_12345
+        type:
+          type: string
+          example: payment.completed
+        amount:
+          type: string
+          example: "5000"
+        currency:
+          type: string
+          example: NGN
+        occurred_at:
+          type: string
+          format: date-time
+          example: "2026-01-10T12:00:00Z"
+      additionalProperties: false
+
+    WebhookAckResponse:
+      type: object
+      required: [ok]
+      properties:
+        ok:
+          type: boolean
+          example: true
