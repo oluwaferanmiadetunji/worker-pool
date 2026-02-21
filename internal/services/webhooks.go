@@ -7,26 +7,16 @@ import (
 	"worker-pool/api"
 	"worker-pool/internal/db"
 	sqlc "worker-pool/internal/db/sqlc/generated"
-
-	r "worker-pool/internal/redis"
-
-	"github.com/go-redis/redis/v8"
 	"github.com/rs/zerolog/log"
 )
 
 type WebhookService struct {
-	store       db.Store
-	redisClient *redis.Client
+	store db.Store
 }
 
 func NewWebhookService(store db.Store) *WebhookService {
-	var redisClient *redis.Client
-	if r.RedisClient != nil {
-		redisClient = r.RedisClient
-	}
 	return &WebhookService{
-		store:       store,
-		redisClient: redisClient,
+		store: store,
 	}
 }
 

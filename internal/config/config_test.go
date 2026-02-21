@@ -12,15 +12,11 @@ import (
 func TestLoadConfig(t *testing.T) {
 	originalPort := os.Getenv("PORT")
 	originalDBURL := os.Getenv("DB_URL")
-	originalRedisAddr := os.Getenv("REDIS_ADDRESS")
-	originalRedisPass := os.Getenv("REDIS_PASSWORD")
 
 	// Cleanup function
 	defer func() {
 		os.Setenv("PORT", originalPort)
 		os.Setenv("DB_URL", originalDBURL)
-		os.Setenv("REDIS_ADDRESS", originalRedisAddr)
-		os.Setenv("REDIS_PASSWORD", originalRedisPass)
 	}()
 
 	tests := []struct {
@@ -34,29 +30,11 @@ func TestLoadConfig(t *testing.T) {
 			setupEnv: func() {
 				os.Setenv("PORT", "8080")
 				os.Setenv("DB_URL", "postgres://user:pass@localhost:5432/db")
-				os.Setenv("REDIS_ADDRESS", "localhost:6379")
-				os.Setenv("REDIS_PASSWORD", "redis-pass")
 			},
 			expectedError: false,
 			validateConfig: func(t *testing.T, cfg config.Config) {
 				assert.Equal(t, "8080", cfg.Port)
 				assert.Equal(t, "postgres://user:pass@localhost:5432/db", cfg.DatabaseURL)
-				assert.Equal(t, "localhost:6379", cfg.Redis.Address)
-				assert.Equal(t, "redis-pass", cfg.Redis.Password)
-			},
-		},
-		{
-			name: "success - redis password from env when not in config",
-			setupEnv: func() {
-				os.Setenv("PORT", "8080")
-				os.Setenv("DB_URL", "postgres://localhost/db")
-				os.Unsetenv("REDIS_ADDRESS")
-				os.Setenv("REDIS_PASSWORD", "env-redis-pass")
-			},
-			expectedError: false,
-			validateConfig: func(t *testing.T, cfg config.Config) {
-				assert.Equal(t, "", cfg.Redis.Address) // Empty address defaults to localhost:6379 in redis package
-				assert.Equal(t, "env-redis-pass", cfg.Redis.Password)
 			},
 		},
 		{
@@ -136,8 +114,6 @@ func TestLoadConfig(t *testing.T) {
 			// Clear all env vars first
 			os.Unsetenv("PORT")
 			os.Unsetenv("DB_URL")
-			os.Unsetenv("REDIS_ADDRESS")
-			os.Unsetenv("REDIS_PASSWORD")
 
 			// Setup test environment
 			tt.setupEnv()

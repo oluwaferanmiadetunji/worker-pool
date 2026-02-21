@@ -8,15 +8,9 @@ import (
 	"github.com/joho/godotenv"
 )
 
-type Redis struct {
-	Address  string
-	Password string
-}
-
 type Config struct {
 	Port        string
 	DatabaseURL string
-	Redis       Redis
 }
 
 func LoadConfig() (Config, error) {
@@ -31,11 +25,6 @@ func LoadConfig() (Config, error) {
 	config.Port = mustGetEnv("PORT")
 
 	config.DatabaseURL = mustGetEnv("DB_URL")
-
-	config.Redis = Redis{
-		Address:  os.Getenv("REDIS_ADDRESS"),
-		Password: os.Getenv("REDIS_PASSWORD"),
-	}
 
 	if _, err := strconv.Atoi(config.Port); err != nil {
 		return config, fmt.Errorf("invalid port number: %w", err)

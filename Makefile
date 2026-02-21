@@ -22,14 +22,6 @@ loadsim:
 workerpool:
 	go run ./cmd/worker-pool
 
-# Start services concurrently using Air
-start:
-	docker compose up --build -d
-	
-
-stop:
-	docker compose down --remove-orphans -v
-
 lint:
 	golangci-lint fmt
 
@@ -62,4 +54,4 @@ openapi-validate:
 # Generate and validate OpenAPI
 openapi: openapi-validate openapi-generate
 
-.PHONY: install start new_migration stop sqlc run lint test mocks openapi openapi-generate openapi-validate workerpool
+.PHONY: install new_migration sqlc run lint test mocks openapi openapi-generate openapi-validate workerpool

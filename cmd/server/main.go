@@ -11,7 +11,6 @@ import (
 	"worker-pool/internal/config"
 	"worker-pool/internal/db"
 	"worker-pool/internal/handler"
-	"worker-pool/internal/redis"
 	"worker-pool/internal/services"
 
 	"github.com/labstack/echo/v4"
@@ -32,15 +31,6 @@ func main() {
 	store, err := db.InitPostgres(cfg.DatabaseURL)
 	if err != nil {
 		log.Fatal().Err(err).Msg("Error initializing database")
-	}
-
-	if err := redis.InitRedis(redis.RedisConfig{
-		Address:  cfg.Redis.Address,
-		Password: cfg.Redis.Password,
-	}); err != nil {
-		log.Warn().Err(err).Msg("Failed to connect to Redis, continuing without Redis support")
-	} else {
-		log.Info().Msg("Redis connected successfully")
 	}
 
 	ws := services.NewWebhookService(store)
